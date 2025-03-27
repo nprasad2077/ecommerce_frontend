@@ -1,14 +1,17 @@
 import React from "react";
+import {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { addToCart } from "../utils/cart";
 import { getImageUrl } from "../utils/media";
+import Toast from "./Toast";
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
+  const [showToast, setShowToast] = useState(false);
 
   const handleAddToCart = () => {
     addToCart(product);
-    navigate("/cart");
+    setShowToast(true);
   };
 
   return (
@@ -34,6 +37,12 @@ export default function ProductCard({ product }) {
           >
             Add to Cart
           </button>
+          {showToast && (
+            <Toast
+              message="Added to cart!"
+              onClose={() => setShowToast(false)}
+            />
+          )}
         </div>
       </div>
     </div>
