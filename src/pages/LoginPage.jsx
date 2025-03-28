@@ -22,7 +22,7 @@ export default function LoginPage() {
       });
 
       login(data); // Save to context + localStorage
-      navigate("/products");
+      navigate("/");
     } catch (err) {
       setError("Invalid credentials. Please try again.");
     }

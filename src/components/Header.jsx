@@ -8,7 +8,6 @@ export default function Header() {
   const { user, logout } = useAuth();
   const { cart } = useCart();
   const cartCount = cart.reduce((acc, item) => acc + item.qty, 0);
-  
 
   return (
     <header className="bg-white shadow px-6 py-4 flex justify-between items-center">
@@ -25,7 +24,11 @@ export default function Header() {
             </span>
           )}
         </Link>
-
+        {user?.isAdmin && (
+          <Link to="/admin" className="text-sm text-blue-600 hover:underline">
+            Admin
+          </Link>
+        )}
         {user ? (
           <>
             <span className="text-sm text-gray-600">{user.name}</span>
@@ -34,6 +37,12 @@ export default function Header() {
               className="text-sm text-gray-700 hover:underline"
             >
               My Orders
+            </Link>
+            <Link
+              to="/profile"
+              className="text-sm text-gray-700 hover:underline"
+            >
+              Profile
             </Link>
             <button
               onClick={logout}
@@ -44,7 +53,7 @@ export default function Header() {
           </>
         ) : (
           <Link
-            to="/"
+            to="/login"
             className="flex items-center gap-1 text-gray-700 hover:text-black"
           >
             <User className="w-5 h-5" />

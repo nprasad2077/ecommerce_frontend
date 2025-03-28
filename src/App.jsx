@@ -11,6 +11,8 @@ import OrderPage from "./pages/OrderPage";
 import PaymentPage from "./pages/PaymentPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
 import PrivateRoute from "./components/PrivateRoute";
+import ProfilePage from "./pages/ProfilePage";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -59,6 +61,22 @@ function App() {
           element={
             <PrivateRoute>
               <MyOrdersPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute>
+              <AdminDashboard />
             </PrivateRoute>
           }
         />
