@@ -1,16 +1,18 @@
 import React from "react";
-import {useState} from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addToCart } from "../utils/cart";
 import { getImageUrl } from "../utils/media";
 import Toast from "./Toast";
+import { useCart } from "../context/CartContext";
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
+  const { addItem } = useCart();
 
   const handleAddToCart = () => {
-    addToCart(product);
+    addItem(product);
     setShowToast(true);
   };
 

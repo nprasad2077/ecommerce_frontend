@@ -2,15 +2,17 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, User } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 export default function Header() {
   const { user, logout } = useAuth();
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const { cart } = useCart();
   const cartCount = cart.reduce((acc, item) => acc + item.qty, 0);
+  
 
   return (
     <header className="bg-white shadow px-6 py-4 flex justify-between items-center">
-      <Link to="/products" className="text-xl font-bold">
+      <Link to="/" className="text-xl font-bold">
         MyStore
       </Link>
 
