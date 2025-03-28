@@ -4,12 +4,15 @@ import ProductCard from "../components/ProductCard";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
 
   useEffect(() => {
-    API.get("/products/")
-      .then((res) => setProducts(res.data.products))
-      .catch((err) => console.error(err));
-  }, []);
+    API.get(`/products/?page=${page}`).then((res) => {
+      setProducts(res.data.products);
+      setPages(res.data.pages);
+    });
+  }, [page]);
 
   return (
     <div className="p-8">
