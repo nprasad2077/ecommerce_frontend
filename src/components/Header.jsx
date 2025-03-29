@@ -12,7 +12,7 @@ export default function Header() {
   return (
     <header className="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
       <Link to="/" className="text-xl font-bold text-gray-800">
-        MyStore
+        Vibe Store
       </Link>
 
       <div className="flex items-center gap-4">

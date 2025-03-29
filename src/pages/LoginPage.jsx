@@ -40,7 +40,7 @@ export default function LoginPage() {
         {/* Logo/Brand */}
         <div className="text-center mb-8">
           <Link to="/" className="text-3xl font-bold text-blue-600">
-            MyStore
+            Vibe Store
           </Link>
           <p className="mt-2 text-gray-600">Sign in to your account</p>
         </div>

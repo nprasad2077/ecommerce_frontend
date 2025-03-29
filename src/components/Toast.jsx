@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Check, X } from "lucide-react";
+import { Check, X, AlertTriangle, Info } from "lucide-react";
 
 export default function Toast({ message, onClose, type = "success" }) {
   useEffect(() => {
@@ -25,28 +25,46 @@ export default function Toast({ message, onClose, type = "success" }) {
   const getIcon = () => {
     switch (type) {
       case "success":
-        return <Check size={16} className="text-green-500" />;
+        return <Check size={18} className="text-green-500" />;
       case "error":
-        return <X size={16} className="text-red-500" />;
+        return <X size={18} className="text-red-500" />;
       case "warning":
-        return <Check size={16} className="text-yellow-500" />;
+        return <AlertTriangle size={18} className="text-yellow-500" />;
       case "info":
-        return <Check size={16} className="text-blue-500" />;
+        return <Info size={18} className="text-blue-500" />;
       default:
-        return <Check size={16} className="text-green-500" />;
+        return <Check size={18} className="text-green-500" />;
     }
   };
 
   return (
-    <div className={`fixed bottom-6 right-6 z-50 flex items-center rounded-md border px-4 py-3 shadow-lg ${getToastStyles()}`}>
+    <div 
+      className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex items-center rounded-lg border shadow-lg px-4 py-3 ${getToastStyles()}`}
+      style={{ 
+        animation: 'slideInUp 0.3s ease forwards'
+      }}
+    >
       <div className="mr-2">{getIcon()}</div>
-      <div className="text-sm font-medium">{message}</div>
+      <div className="text-sm font-medium mr-2">{message}</div>
       <button
         onClick={onClose}
-        className="ml-4 text-gray-400 hover:text-gray-600"
+        className="ml-auto text-gray-400 hover:text-gray-600 focus:outline-none"
       >
-        <X size={14} />
+        <X size={16} />
       </button>
+
+      <style jsx>{`
+        @keyframes slideInUp {
+          from {
+            transform: translate(-50%, 100%);
+            opacity: 0;
+          }
+          to {
+            transform: translate(-50%, 0);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 }
