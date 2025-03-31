@@ -31,16 +31,18 @@ export default function CartPage() {
       <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
         <h1 className="text-2xl font-bold text-gray-800">Shopping Cart</h1>
       </div>
-      
+
       {cart.length === 0 ? (
         <div className="bg-white rounded-lg shadow-sm p-8 text-center">
           <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto flex items-center justify-center mb-4">
             <ShoppingBag size={24} className="text-gray-400" />
           </div>
           <h2 className="text-xl font-bold mb-2">Your cart is empty</h2>
-          <p className="text-gray-600 mb-6">Looks like you haven't added any products to your cart yet.</p>
+          <p className="text-gray-600 mb-6">
+            Looks like you haven't added any products to your cart yet.
+          </p>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/products")}
             className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
           >
             Continue Shopping
@@ -62,16 +64,22 @@ export default function CartPage() {
                           className="w-full sm:w-16 h-16 object-cover rounded"
                         />
                       </div>
-                      
+
                       <div className="sm:ml-4 flex-grow">
-                        <h3 className="font-medium text-gray-800">{item.name}</h3>
-                        <p className="text-sm text-gray-500 mt-1">${item.price}</p>
+                        <h3 className="font-medium text-gray-800">
+                          {item.name}
+                        </h3>
+                        <p className="text-sm text-gray-500 mt-1">
+                          ${item.price}
+                        </p>
                       </div>
-                      
+
                       <div className="flex items-center mt-4 sm:mt-0">
                         <div className="flex items-center border rounded-md mr-4">
                           <button
-                            onClick={() => updateQty(item.product, Math.max(1, item.qty - 1))}
+                            onClick={() =>
+                              updateQty(item.product, Math.max(1, item.qty - 1))
+                            }
                             className="px-3 py-1 text-gray-600 hover:bg-gray-100"
                             disabled={item.qty <= 1}
                           >
@@ -79,13 +87,15 @@ export default function CartPage() {
                           </button>
                           <span className="px-3 py-1 border-x">{item.qty}</span>
                           <button
-                            onClick={() => updateQty(item.product, item.qty + 1)}
+                            onClick={() =>
+                              updateQty(item.product, item.qty + 1)
+                            }
                             className="px-3 py-1 text-gray-600 hover:bg-gray-100"
                           >
                             +
                           </button>
                         </div>
-                        
+
                         <button
                           onClick={() => removeItem(item.product)}
                           className="text-gray-400 hover:text-red-500 p-1"
@@ -98,11 +108,11 @@ export default function CartPage() {
                   </div>
                 ))}
               </div>
-              
+
               {/* Continue shopping button */}
               <div className="bg-gray-50 px-6 py-4">
                 <button
-                  onClick={() => navigate("/")}
+                  onClick={() => navigate("/products")}
                   className="flex items-center text-blue-600 hover:text-blue-700 font-medium"
                 >
                   <ArrowLeft size={16} className="mr-1" />
@@ -111,12 +121,12 @@ export default function CartPage() {
               </div>
             </div>
           </div>
-          
+
           {/* Order summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm p-6 sticky top-6">
               <h2 className="text-lg font-bold mb-4">Order Summary</h2>
-              
+
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
@@ -130,7 +140,7 @@ export default function CartPage() {
                   <span className="text-gray-600">Tax</span>
                   <span className="font-medium">${tax.toFixed(2)}</span>
                 </div>
-                
+
                 <div className="border-t pt-3 mt-3">
                   <div className="flex justify-between">
                     <span className="font-bold">Total</span>
@@ -138,7 +148,7 @@ export default function CartPage() {
                   </div>
                 </div>
               </div>
-              
+
               <button
                 onClick={() => navigate("/shipping")}
                 className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 flex items-center justify-center font-medium"
@@ -146,7 +156,7 @@ export default function CartPage() {
                 Proceed to Checkout
                 <ArrowRight size={16} className="ml-1" />
               </button>
-              
+
               {/* Shipping notice */}
               {subtotal > 100 ? (
                 <div className="mt-4 bg-green-50 text-green-800 text-sm px-3 py-2 rounded-md">
@@ -154,7 +164,8 @@ export default function CartPage() {
                 </div>
               ) : (
                 <div className="mt-4 text-sm text-gray-600">
-                  Add ${(100 - subtotal).toFixed(2)} more to qualify for free shipping.
+                  Add ${(100 - subtotal).toFixed(2)} more to qualify for free
+                  shipping.
                 </div>
               )}
             </div>

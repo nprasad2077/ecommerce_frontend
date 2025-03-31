@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import API from "../services/api";
 import { Link } from "react-router-dom";
-import { Package, CheckCircle, Clock, Calendar, ArrowRight, ShoppingBag, Search } from "lucide-react";
+import {
+  Package,
+  CheckCircle,
+  Clock,
+  Calendar,
+  ArrowRight,
+  ShoppingBag,
+  Search,
+} from "lucide-react";
 import Toast from "../components/Toast";
 
 export default function MyOrdersPage() {
@@ -21,9 +29,10 @@ export default function MyOrdersPage() {
   useEffect(() => {
     if (orders.length > 0) {
       setFilteredOrders(
-        orders.filter((order) => 
-          order._id.toString().includes(searchTerm) ||
-          new Date(order.createdAt).toLocaleDateString().includes(searchTerm)
+        orders.filter(
+          (order) =>
+            order._id.toString().includes(searchTerm) ||
+            new Date(order.createdAt).toLocaleDateString().includes(searchTerm)
         )
       );
     }
@@ -45,13 +54,13 @@ export default function MyOrdersPage() {
 
   const formatDate = (dateString) => {
     try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
       });
     } catch (e) {
-      return 'Invalid date';
+      return "Invalid date";
     }
   };
 
@@ -83,7 +92,9 @@ export default function MyOrdersPage() {
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 flex justify-center">
-        <div className="animate-pulse text-gray-500">Loading your orders...</div>
+        <div className="animate-pulse text-gray-500">
+          Loading your orders...
+        </div>
       </div>
     );
   }
@@ -106,7 +117,7 @@ export default function MyOrdersPage() {
             <ShoppingBag className="w-5 h-5 text-blue-600 mr-2" />
             <h1 className="text-2xl font-bold text-gray-800">My Orders</h1>
           </div>
-          
+
           <div className="relative">
             <input
               type="text"
@@ -115,10 +126,13 @@ export default function MyOrdersPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full sm:w-64 px-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
-            <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search
+              size={18}
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            />
           </div>
         </div>
-        
+
         {filteredOrders.length === 0 ? (
           <div className="p-8 text-center">
             <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto flex items-center justify-center mb-4">
@@ -126,13 +140,12 @@ export default function MyOrdersPage() {
             </div>
             <h2 className="text-xl font-bold mb-2">No orders found</h2>
             <p className="text-gray-600 mb-6">
-              {searchTerm 
-                ? "No orders match your search criteria." 
-                : "You haven't placed any orders yet."
-              }
+              {searchTerm
+                ? "No orders match your search criteria."
+                : "You haven't placed any orders yet."}
             </p>
             <Link
-              to="/"
+              to="/products"
               className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
             >
               Browse Products
@@ -155,7 +168,9 @@ export default function MyOrdersPage() {
                 {filteredOrders.map((order) => (
                   <tr key={order._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
-                      <div className="font-medium text-gray-900">#{order._id}</div>
+                      <div className="font-medium text-gray-900">
+                        #{order._id}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center text-gray-600">
@@ -164,7 +179,9 @@ export default function MyOrdersPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-medium">${Number(order.totalPrice).toFixed(2)}</div>
+                      <div className="font-medium">
+                        ${Number(order.totalPrice).toFixed(2)}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       {getStatusBadge(order.isPaid, order.isDelivered)}
@@ -184,7 +201,7 @@ export default function MyOrdersPage() {
           </div>
         )}
       </div>
-      
+
       {showToast && (
         <Toast
           message={toastMessage}

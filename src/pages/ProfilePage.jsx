@@ -1,17 +1,26 @@
 import React, { useEffect, useState } from "react";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
-import { User, Mail, Lock, CheckCircle, ShoppingBag, Calendar, ArrowRight, Clock } from "lucide-react";
+import {
+  User,
+  Mail,
+  Lock,
+  CheckCircle,
+  ShoppingBag,
+  Calendar,
+  ArrowRight,
+  Clock,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import Toast from "../components/Toast";
 
 export default function ProfilePage() {
   const { user, login } = useAuth();
-  const [form, setForm] = useState({ 
-    name: "", 
-    email: "", 
-    password: "", 
-    confirmPassword: "" 
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,11 +38,11 @@ export default function ProfilePage() {
   const fetchUserData = async () => {
     try {
       const res = await API.get("/users/profile/");
-      setForm({ 
-        name: res.data.name, 
-        email: res.data.email, 
-        password: "", 
-        confirmPassword: "" 
+      setForm({
+        name: res.data.name,
+        email: res.data.email,
+        password: "",
+        confirmPassword: "",
       });
     } catch (err) {
       console.error("Failed to fetch user profile:", err);
@@ -80,30 +89,30 @@ export default function ProfilePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validate()) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Only send password if it's been changed
       const updateData = {
         name: form.name,
-        ...(form.password ? { password: form.password } : {})
+        ...(form.password ? { password: form.password } : {}),
       };
-      
+
       const { data } = await API.put("/users/profile/update/", updateData);
       login(data); // Update context/localStorage
-      
+
       setToastMessage("Profile updated successfully!");
       setToastType("success");
       setShowToast(true);
-      
+
       // Clear password fields after successful update
-      setForm(prev => ({
+      setForm((prev) => ({
         ...prev,
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
       }));
     } catch (err) {
       console.error("Failed to update profile:", err);
@@ -117,13 +126,13 @@ export default function ProfilePage() {
 
   const formatDate = (dateString) => {
     try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
       });
     } catch (e) {
-      return 'Invalid date';
+      return "Invalid date";
     }
   };
 
@@ -163,13 +172,18 @@ export default function ProfilePage() {
                 <User className="w-5 h-5 text-blue-600 mr-2" />
                 <h1 className="text-2xl font-bold text-gray-800">My Profile</h1>
               </div>
-              <p className="text-gray-600 text-sm">Update your personal information</p>
+              <p className="text-gray-600 text-sm">
+                Update your personal information
+              </p>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="p-6">
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Full Name
                   </label>
                   <div className="relative">
@@ -191,9 +205,12 @@ export default function ProfilePage() {
                     )}
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Email Address
                   </label>
                   <div className="relative">
@@ -209,16 +226,23 @@ export default function ProfilePage() {
                       readOnly
                       disabled
                     />
-                    <p className="mt-1 text-xs text-gray-500">Email address cannot be changed</p>
+                    <p className="mt-1 text-xs text-gray-500">
+                      Email address cannot be changed
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="pt-4 border-t border-gray-200">
-                  <h3 className="text-lg font-medium text-gray-800 mb-4">Change Password</h3>
-                  
+                  <h3 className="text-lg font-medium text-gray-800 mb-4">
+                    Change Password
+                  </h3>
+
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="password"
+                        className="block text-sm font-medium text-gray-700"
+                      >
                         New Password
                       </label>
                       <div className="relative">
@@ -230,20 +254,27 @@ export default function ProfilePage() {
                           name="password"
                           type="password"
                           className={`w-full pl-10 px-3 py-2 border ${
-                            errors.password ? "border-red-500" : "border-gray-300"
+                            errors.password
+                              ? "border-red-500"
+                              : "border-gray-300"
                           } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                           placeholder="Leave blank to keep current password"
                           value={form.password}
                           onChange={handleChange}
                         />
                         {errors.password && (
-                          <p className="mt-1 text-xs text-red-600">{errors.password}</p>
+                          <p className="mt-1 text-xs text-red-600">
+                            {errors.password}
+                          </p>
                         )}
                       </div>
                     </div>
-                    
+
                     <div className="space-y-2">
-                      <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="confirmPassword"
+                        className="block text-sm font-medium text-gray-700"
+                      >
                         Confirm New Password
                       </label>
                       <div className="relative">
@@ -255,20 +286,24 @@ export default function ProfilePage() {
                           name="confirmPassword"
                           type="password"
                           className={`w-full pl-10 px-3 py-2 border ${
-                            errors.confirmPassword ? "border-red-500" : "border-gray-300"
+                            errors.confirmPassword
+                              ? "border-red-500"
+                              : "border-gray-300"
                           } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                           placeholder="Confirm your new password"
                           value={form.confirmPassword}
                           onChange={handleChange}
                         />
                         {errors.confirmPassword && (
-                          <p className="mt-1 text-xs text-red-600">{errors.confirmPassword}</p>
+                          <p className="mt-1 text-xs text-red-600">
+                            {errors.confirmPassword}
+                          </p>
                         )}
                       </div>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-end pt-4">
                   <button
                     type="submit"
@@ -277,16 +312,30 @@ export default function ProfilePage() {
                   >
                     {isSubmitting ? (
                       <>
-                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <svg
+                          className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
                         </svg>
                         Updating...
                       </>
                     ) : (
-                      <>
-                        Update Profile
-                      </>
+                      <>Update Profile</>
                     )}
                   </button>
                 </div>
@@ -294,7 +343,7 @@ export default function ProfilePage() {
             </form>
           </div>
         </div>
-        
+
         {/* Recent Orders */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
@@ -302,14 +351,19 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center">
                   <ShoppingBag className="w-5 h-5 text-blue-600 mr-2" />
-                  <h2 className="text-lg font-bold text-gray-800">Recent Orders</h2>
+                  <h2 className="text-lg font-bold text-gray-800">
+                    Recent Orders
+                  </h2>
                 </div>
-                <Link to="/myorders" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                <Link
+                  to="/myorders"
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >
                   View All
                 </Link>
               </div>
             </div>
-            
+
             <div className="p-6">
               {loadingOrders ? (
                 <div className="animate-pulse text-gray-500 text-center py-8">
@@ -320,9 +374,11 @@ export default function ProfilePage() {
                   <div className="w-12 h-12 bg-gray-100 rounded-full mx-auto flex items-center justify-center mb-4">
                     <ShoppingBag size={20} className="text-gray-400" />
                   </div>
-                  <p className="text-gray-600 mb-4">You haven't placed any orders yet.</p>
+                  <p className="text-gray-600 mb-4">
+                    You haven't placed any orders yet.
+                  </p>
                   <Link
-                    to="/"
+                    to="/products"
                     className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
                   >
                     Browse Products
@@ -332,9 +388,14 @@ export default function ProfilePage() {
               ) : (
                 <div className="space-y-4">
                   {recentOrders.map((order) => (
-                    <div key={order._id} className="border border-gray-200 rounded-md p-4 hover:bg-gray-50 transition-colors">
+                    <div
+                      key={order._id}
+                      className="border border-gray-200 rounded-md p-4 hover:bg-gray-50 transition-colors"
+                    >
                       <div className="flex justify-between mb-2">
-                        <div className="font-medium text-gray-900">Order #{order._id}</div>
+                        <div className="font-medium text-gray-900">
+                          Order #{order._id}
+                        </div>
                         {getStatusBadge(order.isPaid, order.isDelivered)}
                       </div>
                       <div className="flex items-center text-sm text-gray-600 mb-3">
@@ -342,7 +403,12 @@ export default function ProfilePage() {
                         {formatDate(order.createdAt)}
                       </div>
                       <div className="flex justify-between">
-                        <div className="text-gray-700 font-medium">${order.totalPrice ? Number(order.totalPrice).toFixed(2) : '0.00'}</div>
+                        <div className="text-gray-700 font-medium">
+                          $
+                          {order.totalPrice
+                            ? Number(order.totalPrice).toFixed(2)
+                            : "0.00"}
+                        </div>
                         <Link
                           to={`/order/${order._id}`}
                           className="text-blue-600 hover:text-blue-700 text-sm font-medium"
@@ -356,16 +422,18 @@ export default function ProfilePage() {
               )}
             </div>
           </div>
-          
+
           {/* Account Security */}
           <div className="bg-white rounded-lg shadow-sm overflow-hidden mt-6">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center mb-1">
                 <Lock className="w-5 h-5 text-blue-600 mr-2" />
-                <h2 className="text-lg font-bold text-gray-800">Account Security</h2>
+                <h2 className="text-lg font-bold text-gray-800">
+                  Account Security
+                </h2>
               </div>
             </div>
-            
+
             <div className="p-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -375,14 +443,16 @@ export default function ProfilePage() {
                     Set
                   </span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-700">Two-Factor Authentication</span>
+                  <span className="text-gray-700">
+                    Two-Factor Authentication
+                  </span>
                   <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
                     Enable
                   </button>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-gray-700">Account Activity</span>
                   <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
@@ -394,7 +464,7 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-      
+
       {showToast && (
         <Toast
           message={toastMessage}

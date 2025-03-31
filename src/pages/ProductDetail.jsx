@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import API from "../services/api";
 import { useCart } from "../context/CartContext";
@@ -143,25 +144,25 @@ export default function ProductDetail() {
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6">
       {/* Breadcrumb */}
       <div className="flex items-center text-sm text-gray-500 mb-6">
-        <a href="/" className="hover:text-blue-600">
+        <Link to="/" className="hover:text-blue-600">
           Home
-        </a>
+        </Link>
         <span className="mx-2">/</span>
-        <a href="/" className="hover:text-blue-600">
+        <Link to="/products" className="hover:text-blue-600">
           Products
-        </a>
+        </Link>
         <span className="mx-2">/</span>
         <span className="text-gray-700">{product.name}</span>
       </div>
 
       {/* Back button */}
-      <a
-        href="/"
+      <Link
+        to="/products"
         className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 mb-4"
       >
         <ArrowLeft size={16} className="mr-1" />
         Back to products
-      </a>
+      </Link>
 
       <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
