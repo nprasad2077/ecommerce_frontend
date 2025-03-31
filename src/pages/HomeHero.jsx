@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowRight, ShoppingBag, Truck, Shield, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
+import FeaturedProducts from "../components/FeaturedProducts";
 
 export default function HomeHero() {
   return (
@@ -75,6 +76,8 @@ export default function HomeHero() {
             </div>
           </div>
         </div>
+        {/* Features Section */}
+        <FeaturedProducts />
       </div>
     </div>
   );
