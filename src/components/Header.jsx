@@ -16,8 +16,8 @@ export default function Header() {
       </Link>
 
       <div className="flex items-center gap-4">
-        <Link 
-          to="/cart" 
+        <Link
+          to="/cart"
           className="relative p-2 text-gray-600 hover:text-gray-800 transition-colors"
         >
           <ShoppingCart className="w-5 h-5" />
@@ -27,35 +27,35 @@ export default function Header() {
             </span>
           )}
         </Link>
-        
+
         {user ? (
           <div className="flex items-center gap-4">
             {user.isAdmin && (
-              <Link 
-                to="/admin" 
+              <Link
+                to="/admin"
                 className="text-sm text-blue-600 hover:text-blue-700 font-medium"
               >
                 Admin
               </Link>
             )}
-            
+
             <Link
               to="/myorders"
               className="text-sm text-gray-600 hover:text-gray-800 transition-colors"
             >
               My Orders
             </Link>
-            
+
             <Link
               to="/profile"
               className="text-sm text-gray-600 hover:text-gray-800 transition-colors"
             >
               Profile
             </Link>
-            
+
             <button
               onClick={logout}
-              className="text-sm text-red-500 hover:text-red-600 transition-colors font-medium"
+              className="text-sm text-red-500 hover:text-red-600 transition-colors font-medium cursor-pointer"
             >
               Logout
             </button>
