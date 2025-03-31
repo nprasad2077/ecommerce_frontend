@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getImageUrl } from "../utils/media";
 import { useCart } from "../context/CartContext";
+import { useFavorites } from "../context/FavoritesContext";
 import { useToast } from "../context/ToastContext";
 import Stars from "./Stars";
 import { ShoppingBag, Heart, Eye, Tag } from "lucide-react";
@@ -10,15 +11,23 @@ export default function ProductCard({ product }) {
   const navigate = useNavigate();
   const [isHovering, setIsHovering] = useState(false);
   const { addItem } = useCart();
+  const { toggleFavorite, isFavorite } = useFavorites();
   const { showToast } = useToast();
+  const isProductFavorited = isFavorite(product._id);
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
     addItem(product);
     showToast("Added to cart!");
   };
+
+  const handleToggleFavorite = (e) => {
+    e.stopPropagation();
+    const wasAdded = toggleFavorite(product);
+    showToast(wasAdded ? "Added to favorites!" : "Removed from favorites", wasAdded ? "success" : "info");
+  };
   
-  // Calculate if product is on sale (assuming product.oldPrice exists for items on sale)
+  // Calculate if product is on sale
   const isOnSale = product.oldPrice && product.oldPrice > product.price;
   const discountPercentage = isOnSale 
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) 
@@ -35,8 +44,8 @@ export default function ProductCard({ product }) {
           ? '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.04)' 
           : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
         border: isHovering 
-          ? '1px solid rgba(219, 234, 254, 1)' // Light blue border on hover (blue-100)
-          : '1px solid rgba(229, 231, 235, 1)' // Light gray border (gray-200)
+          ? '1px solid rgba(219, 234, 254, 1)'
+          : '1px solid rgba(229, 231, 235, 1)'
       }}
     >
       <div className="relative overflow-hidden">
@@ -72,21 +81,25 @@ export default function ProductCard({ product }) {
           )}
         </div>
         
-        {/* Quick action buttons - only show on hover */}
+        {/* Quick action buttons */}
         <div 
           className={`absolute right-3 top-3 flex flex-col gap-2 transition-all duration-300 ${
             isHovering ? 'opacity-100 transform translate-x-0' : 'opacity-0 transform translate-x-3'
           }`}
         >
           <button 
-            className="bg-white text-gray-800 p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Add wishlist functionality here
-            }}
-            aria-label="Add to wishlist"
+            className={`p-2 rounded-full shadow-md transition-colors ${
+              isProductFavorited
+                ? 'bg-red-50 hover:bg-red-100'
+                : 'bg-white hover:bg-gray-100'
+            }`}
+            onClick={handleToggleFavorite}
+            aria-label={isProductFavorited ? "Remove from favorites" : "Add to favorites"}
           >
-            <Heart size={16} className="text-gray-700" />
+            <Heart 
+              size={16} 
+              className={isProductFavorited ? 'text-red-500 fill-current' : 'text-gray-700'}
+            />
           </button>
           <button 
             className="bg-white text-gray-800 p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
@@ -101,21 +114,23 @@ export default function ProductCard({ product }) {
         </div>
       </div>
       
+      {/* Product details */}
       <div className="p-4">
-        {/* Brand & Category Row */}
         <div className="flex justify-between items-center mb-1">
           {product.category && (
-            <p className="text-xs text-blue-600 font-medium transition-colors group-hover:text-blue-700">{product.category}</p>
+            <p className="text-xs text-blue-600 font-medium transition-colors group-hover:text-blue-700">
+              {product.category}
+            </p>
           )}
           {product.brand && (
             <p className="text-xs text-gray-600">{product.brand}</p>
           )}
         </div>
         
-        {/* Product name */}
-        <h3 className="text-sm font-medium mb-1 line-clamp-2 h-10 text-gray-800 group-hover:text-gray-900">{product.name}</h3>
+        <h3 className="text-sm font-medium mb-1 line-clamp-2 h-10 text-gray-800 group-hover:text-gray-900">
+          {product.name}
+        </h3>
         
-        {/* Ratings */}
         <div className="flex items-center mb-2">
           <Stars value={product.rating} />
           <span className="text-xs text-gray-600 ml-1">
@@ -123,7 +138,6 @@ export default function ProductCard({ product }) {
           </span>
         </div>
         
-        {/* Price & Stock Info */}
         <div className="flex justify-between items-end mt-2">
           <div className="flex items-center">
             <span className="font-bold text-sm mr-2">${product.price}</span>
@@ -138,7 +152,6 @@ export default function ProductCard({ product }) {
           </span>
         </div>
         
-        {/* Add to cart button - appears with a fade in */}
         <div className="mt-4">
           <button
             onClick={handleAddToCart}
@@ -148,7 +161,7 @@ export default function ProductCard({ product }) {
             disabled={product.countInStock === 0}
           >
             <ShoppingBag size={14} className="mr-1" />
-            {isHovering ? 'Add to Cart' : 'Add to Cart'}
+            Add to Cart
           </button>
         </div>
       </div>

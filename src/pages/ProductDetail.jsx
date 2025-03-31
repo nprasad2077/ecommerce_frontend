@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../services/api";
 import { useCart } from "../context/CartContext";
+import { useFavorites } from "../context/FavoritesContext";
 import { useAuth } from "../context/AuthContext";
 import { getImageUrl } from "../utils/media";
 import Stars from "../components/Stars";
@@ -19,6 +20,7 @@ import {
 export default function ProductDetail() {
   const { id } = useParams();
   const { addItem } = useCart();
+  const { toggleFavorite, isFavorite } = useFavorites();
   const { user } = useAuth();
 
   const [product, setProduct] = useState(null);
@@ -29,6 +31,7 @@ export default function ProductDetail() {
   const [reviewed, setReviewed] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
 
   useEffect(() => {
     fetchProduct();
@@ -51,6 +54,18 @@ export default function ProductDetail() {
       addItem(product, quantity);
       setToastMessage("Added to cart!");
       setShowToast(true);
+      setToastType("success");
+    }
+  };
+
+  const handleToggleFavorite = () => {
+    if (product) {
+      const wasAdded = toggleFavorite(product);
+      setToastMessage(
+        wasAdded ? "Added to favorites!" : "Removed from favorites"
+      );
+      setToastType(wasAdded ? "success" : "info");
+      setShowToast(true);
     }
   };
 
@@ -63,10 +78,12 @@ export default function ProductDetail() {
       setComment("");
       setToastMessage("Review submitted successfully!");
       setShowToast(true);
+      setToastType("success");
       fetchProduct(); // Refresh reviews
     } catch {
       setToastMessage("Failed to submit review.");
       setShowToast(true);
+      setToastType("error");
     }
   };
 
@@ -75,10 +92,12 @@ export default function ProductDetail() {
       await API.delete(`/products/${id}/reviews/${reviewId}/`);
       setToastMessage("Review deleted successfully!");
       setShowToast(true);
+      setToastType("success");
       fetchProduct();
     } catch {
       setToastMessage("Failed to delete review.");
       setShowToast(true);
+      setToastType("error");
     }
   };
 
@@ -102,7 +121,6 @@ export default function ProductDetail() {
     );
   }
 
-  // Safely get product rating as a number
   const productRating =
     typeof product.rating === "number"
       ? product.rating
@@ -118,6 +136,8 @@ export default function ProductDetail() {
   const hasReviewed =
     Array.isArray(product.reviews) &&
     product.reviews.some((r) => user && r.user === user._id);
+
+  const isProductFavorited = isFavorite(product._id);
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6">
@@ -262,10 +282,26 @@ export default function ProductDetail() {
                 </button>
 
                 <button
-                  className="flex items-center px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-50"
-                  aria-label="Add to wishlist"
+                  onClick={handleToggleFavorite}
+                  className={`flex items-center px-3 py-2 rounded-md border transition-colors ${
+                    isProductFavorited
+                      ? "border-red-200 bg-red-50 hover:bg-red-100"
+                      : "border-gray-300 hover:bg-gray-50"
+                  }`}
+                  aria-label={
+                    isProductFavorited
+                      ? "Remove from favorites"
+                      : "Add to favorites"
+                  }
                 >
-                  <Heart size={18} />
+                  <Heart
+                    size={18}
+                    className={
+                      isProductFavorited
+                        ? "text-red-500 fill-current"
+                        : "text-gray-700"
+                    }
+                  />
                 </button>
               </div>
             </div>
@@ -423,7 +459,11 @@ export default function ProductDetail() {
       </div>
 
       {showToast && (
-        <Toast message={toastMessage} onClose={() => setShowToast(false)} />
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setShowToast(false)}
+        />
       )}
     </div>
   );
