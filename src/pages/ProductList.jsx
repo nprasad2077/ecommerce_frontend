@@ -4,21 +4,19 @@ import { useSearchParams } from "react-router-dom";
 import API from "../services/api";
 import PageWrapper from "../components/PageWrapper";
 import ProductCard from "../components/ProductCard";
-import { Search, Filter, ArrowLeft, ArrowRight, X } from "lucide-react";
+import { Search, ArrowLeft, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCardSkeleton from "../components/ProductCardSkeleton";
+import { defaultMotionTransition, defaultStaggeredTransition } from "../utils/animationConfig";
+
 
 export default function ProductList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
-  const [searchTerm, setSearchTerm] = useState(
-    searchParams.get("keyword") || ""
-  );
-  const [selectedCategory, setSelectedCategory] = useState(
-    searchParams.get("category") || ""
-  );
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("keyword") || "");
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,7 +33,7 @@ export default function ProductList() {
     fetchCategories();
   }, []);
 
-  // Fetch products when search params change
+  // Fetch products when filters change
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
@@ -88,7 +86,7 @@ export default function ProductList() {
   return (
     <PageWrapper>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        {/* Header with search */}
+        {/* Header and Search */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h1 className="text-2xl font-bold text-gray-800">All Products</h1>
@@ -112,36 +110,31 @@ export default function ProductList() {
             </form>
           </div>
 
-          {/* Category filters */}
-          <div className="mt-4">
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => handleCategoryChange(category)}
-                  className={`px-3 py-1 rounded-full text-sm ${
-                    selectedCategory === category
-                      ? "bg-blue-100 text-blue-800"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
+          {/* Category Filters */}
+          <div className="mt-4 flex flex-wrap gap-2">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => handleCategoryChange(category)}
+                className={`px-3 py-1 rounded-full text-sm ${
+                  selectedCategory === category
+                    ? "bg-blue-100 text-blue-800"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
           </div>
 
-          {/* Active filters */}
+          {/* Active Filters */}
           {(searchTerm || selectedCategory) && (
             <div className="mt-4 flex items-center gap-2">
               <span className="text-sm text-gray-600">Active filters:</span>
               {searchTerm && (
                 <span className="bg-blue-50 text-blue-800 text-sm px-2 py-1 rounded-full flex items-center">
                   Search: {searchTerm}
-                  <button
-                    onClick={() => setSearchTerm("")}
-                    className="ml-1 hover:text-blue-600"
-                  >
+                  <button onClick={() => setSearchTerm("")} className="ml-1 hover:text-blue-600">
                     <X size={14} />
                   </button>
                 </span>
@@ -149,31 +142,19 @@ export default function ProductList() {
               {selectedCategory && (
                 <span className="bg-blue-50 text-blue-800 text-sm px-2 py-1 rounded-full flex items-center">
                   Category: {selectedCategory}
-                  <button
-                    onClick={() => handleCategoryChange("")}
-                    className="ml-1 hover:text-blue-600"
-                  >
+                  <button onClick={() => handleCategoryChange("")} className="ml-1 hover:text-blue-600">
                     <X size={14} />
                   </button>
                 </span>
               )}
-              <button
-                onClick={clearFilters}
-                className="text-sm text-gray-600 hover:text-gray-800"
-              >
+              <button onClick={clearFilters} className="text-sm text-gray-600 hover:text-gray-800">
                 Clear all
               </button>
             </div>
           )}
         </div>
 
-        {/* {isLoading && (
-          <div className="mb-4 text-sm text-blue-600 bg-blue-50 border border-blue-100 rounded-md px-4 py-2">
-            Loading products...
-          </div>
-        )} */}
-
-        {/* Product grid */}
+        {/* Product Grid */}
         <AnimatePresence mode="wait">
           {isLoading ? (
             <motion.div
@@ -181,13 +162,12 @@ export default function ProductList() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={defaultMotionTransition}
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
             >
-              {Array(8)
-                .fill(null)
-                .map((_, i) => (
-                  <ProductCardSkeleton key={i} />
-                ))}
+              {Array(8).fill(null).map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))}
             </motion.div>
           ) : products.length === 0 ? (
             <motion.div
@@ -195,6 +175,7 @@ export default function ProductList() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={defaultMotionTransition}
               className="bg-white rounded-lg shadow-sm p-6 text-center"
             >
               <p className="text-gray-600">
@@ -204,14 +185,28 @@ export default function ProductList() {
           ) : (
             <motion.div
               key="products"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              layout
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: defaultStaggeredTransition,
+                },
+              }}
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
             >
               {products.map((product) => (
-                <ProductCard key={product._id} product={product} />
+                <motion.div
+                  key={product._id}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  transition={defaultMotionTransition}
+                >
+                  <ProductCard product={product} />
+                </motion.div>
               ))}
             </motion.div>
           )}
@@ -224,9 +219,7 @@ export default function ProductList() {
               onClick={() => setPage(Math.max(1, page - 1))}
               disabled={page === 1}
               className={`p-2 rounded-md border ${
-                page === 1
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "hover:bg-gray-50"
+                page === 1 ? "text-gray-400 cursor-not-allowed" : "hover:bg-gray-50"
               }`}
               aria-label="Previous page"
             >
@@ -251,9 +244,7 @@ export default function ProductList() {
               onClick={() => setPage(Math.min(pages, page + 1))}
               disabled={page === pages}
               className={`p-2 rounded-md border ${
-                page === pages
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "hover:bg-gray-50"
+                page === pages ? "text-gray-400 cursor-not-allowed" : "hover:bg-gray-50"
               }`}
               aria-label="Next page"
             >
