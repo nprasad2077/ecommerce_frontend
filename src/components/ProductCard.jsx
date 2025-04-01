@@ -6,6 +6,7 @@ import { useFavorites } from "../context/FavoritesContext";
 import { useToast } from "../context/ToastContext";
 import Stars from "./Stars";
 import { ShoppingBag, Heart, Eye, Tag } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();

@@ -5,6 +5,8 @@ import API from "../services/api";
 import PageWrapper from "../components/PageWrapper";
 import ProductCard from "../components/ProductCard";
 import { Search, Filter, ArrowLeft, ArrowRight, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import ProductCardSkeleton from "../components/ProductCardSkeleton";
 
 export default function ProductList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -165,26 +167,55 @@ export default function ProductList() {
           )}
         </div>
 
+        {/* {isLoading && (
+          <div className="mb-4 text-sm text-blue-600 bg-blue-50 border border-blue-100 rounded-md px-4 py-2">
+            Loading products...
+          </div>
+        )} */}
+
         {/* Product grid */}
-        {isLoading ? (
-          <div className="flex justify-center py-12">
-            <div className="animate-pulse text-gray-500">
-              Loading products...
-            </div>
-          </div>
-        ) : products.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-            <p className="text-gray-600">
-              No products found. Try different search terms or filters.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            >
+              {Array(8)
+                .fill(null)
+                .map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))}
+            </motion.div>
+          ) : products.length === 0 ? (
+            <motion.div
+              key="no-results"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="bg-white rounded-lg shadow-sm p-6 text-center"
+            >
+              <p className="text-gray-600">
+                No products found. Try a different filter or search.
+              </p>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="products"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            >
+              {products.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Pagination */}
         {pages > 1 && (
