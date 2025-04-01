@@ -1,32 +1,80 @@
+// src/pages/ProductList.jsx
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import API from "../services/api";
 import ProductCard from "../components/ProductCard";
-import { Search, Filter, ArrowLeft, ArrowRight } from "lucide-react";
+import { Search, Filter, ArrowLeft, ArrowRight, X } from "lucide-react";
 
 export default function ProductList() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("keyword") || "");
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
+  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Fetch categories on mount
   useEffect(() => {
-    setIsLoading(true);
-    API.get(`/products/?page=${page}&search=${searchTerm}`)
-      .then((res) => {
+    const fetchCategories = async () => {
+      try {
+        const res = await API.get("/products/categories/");
+        setCategories(res.data.categories);
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Fetch products when search params change
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      try {
+        let url = `/products/?page=${page}`;
+        if (searchTerm) url += `&keyword=${searchTerm}`;
+        if (selectedCategory) url += `&category=${selectedCategory}`;
+        
+        const res = await API.get(url);
         setProducts(res.data.products);
         setPages(res.data.pages);
-        setIsLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error("Failed to fetch products:", err);
-        setIsLoading(false);
-      });
-  }, [page, searchTerm]);
+      }
+      setIsLoading(false);
+    };
+
+    fetchProducts();
+  }, [page, searchTerm, selectedCategory]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Reset to first page when searching
+    setPage(1);
+    updateSearchParams();
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setPage(1);
+    setSearchParams({ 
+      ...(searchTerm && { keyword: searchTerm }),
+      ...(category && { category })
+    });
+  };
+
+  const updateSearchParams = () => {
+    setSearchParams({ 
+      ...(searchTerm && { keyword: searchTerm }),
+      ...(selectedCategory && { category: selectedCategory })
+    });
+  };
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("");
+    setSearchParams({});
     setPage(1);
   };
 
@@ -53,15 +101,62 @@ export default function ProductList() {
                 <Search size={18} />
               </button>
             </div>
-            <button 
-              type="button" 
-              className="ml-2 bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-50 flex items-center"
-            >
-              <Filter size={16} className="mr-1" />
-              <span>Filter</span>
-            </button>
           </form>
         </div>
+
+        {/* Category filters */}
+        <div className="mt-4">
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => handleCategoryChange(category)}
+                className={`px-3 py-1 rounded-full text-sm ${
+                  selectedCategory === category
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Active filters */}
+        {(searchTerm || selectedCategory) && (
+          <div className="mt-4 flex items-center gap-2">
+            <span className="text-sm text-gray-600">Active filters:</span>
+            {searchTerm && (
+              <span className="bg-blue-50 text-blue-800 text-sm px-2 py-1 rounded-full flex items-center">
+                Search: {searchTerm}
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="ml-1 hover:text-blue-600"
+                >
+                  <X size={14} />
+                </button>
+              </span>
+            )}
+            {selectedCategory && (
+              <span className="bg-blue-50 text-blue-800 text-sm px-2 py-1 rounded-full flex items-center">
+                Category: {selectedCategory}
+                <button
+                  onClick={() => handleCategoryChange("")}
+                  className="ml-1 hover:text-blue-600"
+                >
+                  <X size={14} />
+                </button>
+              </span>
+            )}
+            <button
+              onClick={clearFilters}
+              className="text-sm text-gray-600 hover:text-gray-800"
+            >
+              Clear all
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Product grid */}
@@ -71,7 +166,7 @@ export default function ProductList() {
         </div>
       ) : products.length === 0 ? (
         <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-          <p className="text-gray-600">No products found. Try a different search term.</p>
+          <p className="text-gray-600">No products found. Try different search terms or filters.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -95,7 +190,6 @@ export default function ProductList() {
             <ArrowLeft size={18} />
           </button>
           
-          {/* Page numbers */}
           {[...Array(pages)].map((_, i) => (
             <button
               key={i}

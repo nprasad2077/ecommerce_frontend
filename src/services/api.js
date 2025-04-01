@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://127.0.0.1:8000/api", // ← Point directly to Django
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: false, // We use JWT in headers, so no cookies
 });
 

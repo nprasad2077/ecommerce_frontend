@@ -24,43 +24,47 @@ export default function ProductCard({ product }) {
   const handleToggleFavorite = (e) => {
     e.stopPropagation();
     const wasAdded = toggleFavorite(product);
-    showToast(wasAdded ? "Added to favorites!" : "Removed from favorites", wasAdded ? "success" : "info");
+    showToast(
+      wasAdded ? "Added to favorites!" : "Removed from favorites",
+      wasAdded ? "success" : "info"
+    );
   };
-  
+
   // Calculate if product is on sale
   const isOnSale = product.oldPrice && product.oldPrice > product.price;
-  const discountPercentage = isOnSale 
-    ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) 
+  const discountPercentage = isOnSale
+    ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : 0;
 
   return (
-    <div 
-      className="group bg-white rounded-lg overflow-hidden transition-all duration-300 cursor-pointer relative transform hover:-translate-y-1"
+    <div
+      className="group bg-white rounded-lg overflow-hidden border border-gray-200 transition-all duration-300 cursor-pointer relative transform hover:scale-[1.02] hover:shadow-md group-hover:ring-2 group-hover:ring-blue-100 focus-within:ring-2 focus-within:ring-blue-200"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onClick={() => navigate(`/product/${product._id}`)}
-      style={{ 
-        boxShadow: isHovering 
-          ? '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.04)' 
-          : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-        border: isHovering 
-          ? '1px solid rgba(219, 234, 254, 1)'
-          : '1px solid rgba(229, 231, 235, 1)'
+      style={{
+        boxShadow: isHovering
+          ? "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.04)"
+          : "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+        border: isHovering
+          ? "1px solid rgba(219, 234, 254, 1)"
+          : "1px solid rgba(229, 231, 235, 1)",
       }}
     >
       <div className="relative overflow-hidden">
-        <div className="aspect-w-1 aspect-h-1 relative">
+        <div className="relative w-full aspect-[1/1] bg-gray-100 overflow-hidden">
           <img
             src={getImageUrl(product.image)}
             alt={product.name}
-            className="w-full h-56 object-cover bg-gray-100 transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = 'https://via.placeholder.com/300x300?text=Product+Image';
+              e.target.src =
+                "https://via.placeholder.com/300x300?text=Product+Image";
             }}
           />
         </div>
-        
+
         {/* Status badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {product.countInStock === 0 && (
@@ -80,28 +84,36 @@ export default function ProductCard({ product }) {
             </span>
           )}
         </div>
-        
+
         {/* Quick action buttons */}
-        <div 
+        <div
           className={`absolute right-3 top-3 flex flex-col gap-2 transition-all duration-300 ${
-            isHovering ? 'opacity-100 transform translate-x-0' : 'opacity-0 transform translate-x-3'
+            isHovering
+              ? "opacity-100 transform translate-x-0"
+              : "opacity-0 transform translate-x-3"
           }`}
         >
-          <button 
+          <button
             className={`p-2 rounded-full shadow-md transition-colors ${
               isProductFavorited
-                ? 'bg-red-50 hover:bg-red-100'
-                : 'bg-white hover:bg-gray-100'
+                ? "bg-red-50 hover:bg-red-100"
+                : "bg-white hover:bg-gray-100"
             }`}
             onClick={handleToggleFavorite}
-            aria-label={isProductFavorited ? "Remove from favorites" : "Add to favorites"}
+            aria-label={
+              isProductFavorited ? "Remove from favorites" : "Add to favorites"
+            }
           >
-            <Heart 
-              size={16} 
-              className={isProductFavorited ? 'text-red-500 fill-current' : 'text-gray-700'}
+            <Heart
+              size={16}
+              className={
+                isProductFavorited
+                  ? "text-red-500 fill-current"
+                  : "text-gray-700"
+              }
             />
           </button>
-          <button 
+          <button
             className="bg-white text-gray-800 p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
             onClick={(e) => {
               e.stopPropagation();
@@ -113,9 +125,9 @@ export default function ProductCard({ product }) {
           </button>
         </div>
       </div>
-      
+
       {/* Product details */}
-      <div className="p-4">
+      <div className="p-4 space-y-2">
         <div className="flex justify-between items-center mb-1">
           {product.category && (
             <p className="text-xs text-blue-600 font-medium transition-colors group-hover:text-blue-700">
@@ -126,18 +138,18 @@ export default function ProductCard({ product }) {
             <p className="text-xs text-gray-600">{product.brand}</p>
           )}
         </div>
-        
+
         <h3 className="text-sm font-medium mb-1 line-clamp-2 h-10 text-gray-800 group-hover:text-gray-900">
           {product.name}
         </h3>
-        
+
         <div className="flex items-center mb-2">
           <Stars value={product.rating} />
           <span className="text-xs text-gray-600 ml-1">
             ({product.numReviews})
           </span>
         </div>
-        
+
         <div className="flex justify-between items-end mt-2">
           <div className="flex items-center">
             <span className="font-bold text-sm mr-2">${product.price}</span>
@@ -148,15 +160,17 @@ export default function ProductCard({ product }) {
             )}
           </div>
           <span className="text-xs text-gray-600">
-            {product.countInStock > 0 ? `${product.countInStock} in stock` : 'Out of stock'}
+            {product.countInStock > 0
+              ? `${product.countInStock} in stock`
+              : "Out of stock"}
           </span>
         </div>
-        
+
         <div className="mt-4">
           <button
             onClick={handleAddToCart}
-            className={`w-full bg-transparent border border-blue-600 text-blue-600 py-2 px-3 rounded-md hover:bg-blue-600 hover:text-white text-sm flex items-center justify-center transition-all duration-300 ${
-              isHovering ? 'opacity-100' : 'opacity-70'
+            className={`w-full bg-transparent border border-blue-600 text-blue-600 py-2 px-3 rounded-md hover:bg-blue-600 hover:text-white text-sm flex items-center justify-center transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
+              isHovering ? "opacity-100" : "opacity-70"
             }`}
             disabled={product.countInStock === 0}
           >
