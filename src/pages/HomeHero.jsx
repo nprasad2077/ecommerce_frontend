@@ -14,7 +14,7 @@ export default function HomeHero() {
             <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-8 sm:p-12">
               <div className="max-w-3xl">
                 <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                  Discover Quality Products for Your Lifestyle
+                  Welcome to the Vibes Store!
                 </h1>
                 <p className="text-blue-100 text-lg mb-6">
                   Shop our wide selection of premium products at competitive

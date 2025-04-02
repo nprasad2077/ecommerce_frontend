@@ -170,12 +170,18 @@ export default function ProductCard({ product }) {
         <div className="mt-4">
           <button
             onClick={handleAddToCart}
-            className={`w-full bg-transparent border border-blue-600 text-blue-600 py-2 px-3 rounded-md hover:bg-blue-600 hover:text-white text-sm flex items-center justify-center transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
-              isHovering ? "opacity-100" : "opacity-70"
-            }`}
             disabled={product.countInStock === 0}
+            className={`w-full flex items-center justify-center gap-2 text-sm font-medium rounded-xl px-4 py-2 transition-all duration-300
+    ${
+      product.countInStock === 0
+        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+        : "bg-blue-500 text-white hover:bg-blue-600"
+    }
+    focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 shadow-sm ${
+      isHovering ? "opacity-100" : "opacity-80"
+    }`}
           >
-            <ShoppingBag size={14} className="mr-1" />
+            <ShoppingBag size={16} />
             Add to Cart
           </button>
         </div>
