@@ -5,7 +5,7 @@ import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
 import { useToast } from "../context/ToastContext";
 import Stars from "./Stars";
-import { ShoppingBag, Heart, Eye, Tag } from "lucide-react";
+import { ShoppingCart, Heart, Eye, Tag } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function ProductCard({ product }) {
@@ -170,19 +170,17 @@ export default function ProductCard({ product }) {
         <div className="mt-4">
           <button
             onClick={handleAddToCart}
-            disabled={product.countInStock === 0}
-            className={`w-full flex items-center justify-center gap-2 text-sm font-medium rounded-xl px-4 py-2 transition-all duration-300
-    ${
-      product.countInStock === 0
-        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-        : "bg-blue-500 text-white hover:bg-blue-600"
-    }
-    focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 shadow-sm ${
-      isHovering ? "opacity-100" : "opacity-80"
-    }`}
+            disabled={product?.countInStock === 0}
+            className={`w-full text-white text-sm font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center justify-center
+            transition-all duration-300 transform active:scale-95 hover:-translate-y-0.5
+            ${
+              product?.countInStock === 0
+                ? "bg-gray-400 cursor-not-allowed hover:translate-y-0 active:scale-100"
+                : "bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none hover:shadow-lg dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            }`}
           >
-            <ShoppingBag size={16} />
-            Add to Cart
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            {product?.countInStock === 0 ? "Out of Stock" : "Add to Cart"}
           </button>
         </div>
       </div>
