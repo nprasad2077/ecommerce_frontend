@@ -27,6 +27,8 @@ export default function ProductDetail() {
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showLoadingMessage, setShowLoadingMessage] = useState(false);
+  const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
@@ -35,21 +37,33 @@ export default function ProductDetail() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("success");
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
-
   const fetchProduct = async () => {
     try {
       setLoading(true);
+      setError(null);
       const res = await API.get(`/products/${id}/`);
       setProduct(res.data);
-      setLoading(false);
     } catch (err) {
       console.error("Failed to load product", err);
+      setProduct(null);
+      setError("Product not found.");
+    } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    setLoading(true);
+    setShowLoadingMessage(false);
+
+    const delayTimer = setTimeout(() => {
+      setShowLoadingMessage(true);
+    }, 300);
+
+    fetchProduct();
+
+    return () => clearTimeout(delayTimer);
+  }, [id]);
 
   const handleAddToCart = () => {
     if (quantity > 0 && product) {
@@ -103,7 +117,8 @@ export default function ProductDetail() {
     }
   };
 
-  if (loading) {
+  // Show delayed loading message
+  if (loading && showLoadingMessage) {
     return (
       <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 flex justify-center">
         <div className="animate-pulse text-gray-500">
@@ -113,15 +128,18 @@ export default function ProductDetail() {
     );
   }
 
-  if (!product) {
+  // Show error only *after* loading
+  if (!loading && error) {
     return (
       <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6">
         <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-          <p className="text-gray-600">Product not found.</p>
+          <p className="text-gray-600">{error}</p>
         </div>
       </div>
     );
   }
+
+  if (!product) return null;
 
   const productRating =
     typeof product.rating === "number"

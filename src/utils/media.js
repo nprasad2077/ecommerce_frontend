@@ -1,1 +1,1 @@
-export const getImageUrl = (path) => `http://localhost:8000${path}`;
+export const getImageUrl = (path) => `https://django.server.nbaapi.com${path}`;
